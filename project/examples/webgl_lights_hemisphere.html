@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>three.js webgl - lights - hemisphere light</title>
+		<title>FlappyMingo!</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
@@ -38,8 +38,7 @@
 
 		<div id="container"></div>
 		<div id="info">
-			<a href="http://threejs.org" target="_blank">three.js</a> - webgl hemisphere light example -
-			flamingo by <a href="http://mirada.com/">mirada</a> from <a href="http://ro.me">rome</a><br/>
+			<a href="http://threejs.org" target="_blank">three.js</a> FlappyMingo by Thomas Franceschi and Kyle Williams</a><br/>
 		</div>
 		<div id="footer">
 			press <strong>h</strong> to toggle hemisphere light, <strong>d</strong> to toggle directional light
@@ -104,6 +103,9 @@
 			var boxMesh3;
 			var boxMesh4;
 
+			//camera rotation
+			var camCount = 0.0;
+
 			init();
 			animate();
 
@@ -153,8 +155,8 @@
 				// GROUND
 
 				var groundGeo = new THREE.PlaneBufferGeometry( 10000, 10000 );
-				var groundMat = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x050505 } );
-				groundMat.color.setHSL( 0.095, 1, 0.75 );
+				var groundMat = new THREE.MeshPhongMaterial( { color: 0x00cc00, specular: 0x00cc00 } );
+				groundMat.color.setHSL( 0.5, 0.5, 1.0 );
 
 				var ground = new THREE.Mesh( groundGeo, groundMat );
 				ground.rotation.x = -Math.PI/2;
@@ -168,8 +170,8 @@
 				var vertexShader = document.getElementById( 'vertexShader' ).textContent;
 				var fragmentShader = document.getElementById( 'fragmentShader' ).textContent;
 				var uniforms = {
-					topColor:    { value: new THREE.Color( 0x0077ff ) },
-					bottomColor: { value: new THREE.Color( 0xffffff ) },
+					topColor:    { value: new THREE.Color( 0x00cc00 ) },
+					bottomColor: { value: new THREE.Color( 0x37f0ff ) },
 					offset:      { value: 33 },
 					exponent:    { value: 0.6 }
 				};
@@ -345,17 +347,14 @@
 
 				var time = Date.now() * 0.005;
 				
-				if(jump == 1){
-					jumping = 1;
-					jump = 0;
-				}
+				if(jump == 1){ jumping = 1; jump = 0; }
 				if( counter >= 7){
 					jumping = 0;
 					counter = 0;
 				}
+
 				if(jumping == 1){
 					mesh.position.y += 4;
-					
 					counter++;
 				}
 				//fall
@@ -364,6 +363,28 @@
 				//Base height
 				if( mesh.position.y <= 15) mesh.position.y = 15;
 				if( mesh.position.y >= 1000) mesh.position.y = 1000;
+			}
+
+			//Move pipes function
+			function movePipes() {
+				var d = new Date();
+				boxMesh1.position.x-=3;
+				boxMesh3.position.x-=3;
+				if(boxMesh1.position.x <= -325 ) {
+					boxMesh1.position.x = 325;
+					boxMesh3.position.x = 325;
+					boxMesh1.position.y = -130 + d.getTime() % 40; //Randomize pipe height
+					boxMesh3.position.y = boxMesh1.position.y + 345;
+				}
+				
+				boxMesh2.position.x-=3;
+				boxMesh4.position.x-=3;
+				if(boxMesh2.position.x <= -325 ) {
+					boxMesh2.position.x = 325;
+					boxMesh4.position.x = 325;
+					boxMesh2.position.y = -130 + d.getTime() % 40; //Randomize pipe height
+					boxMesh4.position.y = boxMesh2.position.y + 345;
+				}
 			}
 
 			function render() {
@@ -375,7 +396,12 @@
 					mixers[ i ].update( delta );
 
 				}
-
+/*
+				camera.position.x = 600 * Math.sin(camCount);
+				camera.position.z = 600 * Math.cos(camCount);
+				camera.rotation.y = Math.sin(camCount);
+				camCount+=.01;
+*/				
 				//Hit detection
 				if(detectHit()) return;
 
@@ -383,28 +409,9 @@
 				jumpFunc();
 				
 				//move pipes
-				var d = new Date();
+				movePipes();
 
-				//var randNum = d.getTime() % 30;
-
-				boxMesh1.position.x-=3;
-				boxMesh3.position.x-=3;
-				if(boxMesh1.position.x <= -325 ) {
-					boxMesh1.position.x = 325;
-					boxMesh3.position.x = 325;
-					boxMesh1.position.y = -130 + d.getTime() % 40;
-					boxMesh3.position.y = boxMesh1.position.y + 345;
-				}
-				
-				boxMesh2.position.x-=3;
-				boxMesh4.position.x-=3;
-				if(boxMesh2.position.x <= -325 ) {
-					boxMesh2.position.x = 325;
-					boxMesh4.position.x = 325;
-					boxMesh2.position.y = -130 + d.getTime() % 40;
-					boxMesh4.position.y = boxMesh2.position.y + 345;
-				}
-
+				//Render Scene
 				renderer.render( scene, camera );
 
 			}
