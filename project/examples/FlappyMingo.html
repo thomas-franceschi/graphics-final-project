@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>FlappyMingo!</title>
@@ -20,7 +20,7 @@
 				padding: 5px;
 				text-align: center;
 			}
-
+			
 			a {
 				color: #0080ff;
 				text-decoration: none;
@@ -40,10 +40,11 @@
 		<div id="info">
 			<a href="http://threejs.org" target="_blank">three.js</a> FlappyMingo by Thomas Franceschi and Kyle Williams</a><br/>
 		</div>
+				
 		<div id="footer">
-			press <strong>h</strong> to toggle hemisphere light, <strong>d</strong> to toggle directional light
+			press <strong>h</strong> to toggle hemisphere light, <strong>d</strong> to toggle directional light, <strong>LEFT/RIGHT Arrow Keys</strong> to incease/decrease x component of directional light, <strong>UP/DOWN Arrow Keys</strong> to incease/decrease y component of directional light
 		</div>
-
+		
 		<script src="../build/three.js"></script>
 
 		<script src="js/Detector.js"></script>
@@ -105,6 +106,13 @@
 
 			//camera rotation
 			var camCount = 0.0;
+			
+			// score
+			var score = 0;
+
+            //directional light
+			var dirLight_x = -1;
+			var dirLight_y = 1.75;
 
 			init();
 			animate();
@@ -133,7 +141,7 @@
 
 				dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
 				dirLight.color.setHSL( 0.1, 1, 0.95 );
-				dirLight.position.set( -1, 1.75, 1 );
+				dirLight.position.set(dirLight_x, dirLight_y, 1);
 				dirLight.position.multiplyScalar( 50 );
 				scene.add( dirLight );
 
@@ -219,6 +227,7 @@
 				boxMesh3.position.x = 325;
 				boxMesh3.rotation.y = 20;
 				boxMesh3.castShadow = true;
+				
 				scene.add( boxMesh3 );
 
 				var boxGeometry = new THREE.BoxGeometry( 30.0, 300.0, 15.0 );
@@ -302,6 +311,30 @@
 
 					dirLight.visible = !dirLight.visible;
 					break;
+
+				    case 37:
+				    dirLight_x++;
+				    dirLight.position.set(dirLight_x, 1.75, 1);
+				    scene.add(dirLight);
+				    break;
+
+				    case 39:
+				    dirLight_x--;
+				    dirLight.position.set(dirLight_x, 1.75, 1);
+				    scene.add(dirLight);
+				    break;
+
+				    case 38:
+				    dirLight_y++;
+				    dirLight.position.set(-1, dirLight_y, 1);
+				    scene.add(dirLight);
+				    break;
+
+				    case 40:
+				    dirLight_y--;
+				    dirLight.position.set(-1, dirLight_y, 1);
+				    scene.add(dirLight);
+				    break;
 
 					case 32:
 
@@ -403,8 +436,26 @@
 				camCount+=.01;
 */				
 				//Hit detection
-				if(detectHit()) return;
-
+				if(detectHit()){
+					alert("Game Over! Your score was: " + score/2 + ". Refresh to play again!");
+					return;
+				} else{
+								
+					// increment score if passing through blocks
+					if(boxMesh1.position.x <= 1 && boxMesh1.position.x >= -1 ) score++;
+					if(boxMesh2.position.x <= 1 && boxMesh2.position.x >= -1 ) score++;
+					if(boxMesh3.position.x <= 1 && boxMesh3.position.x >= -1 ) score++;
+					if(boxMesh4.position.x <= 1 && boxMesh4.position.x >= -1 ) score++;
+					
+					// display updated score
+					var scoreDisplay = document.createElement('div');
+					scoreDisplay.style.position = 'absolute';
+					scoreDisplay.style.backgroundColor = "white";
+					scoreDisplay.innerHTML = score/2;
+					scoreDisplay.style.top = 200 + 'px';
+					scoreDisplay.style.left = 500 + 'px';
+					document.body.appendChild(scoreDisplay);
+				}	
 				//Jump & Fall
 				jumpFunc();
 				
