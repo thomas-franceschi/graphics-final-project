@@ -380,17 +380,22 @@
 
 				var time = Date.now() * 0.005;
 				
+				//set state to jumping if jump button hit
 				if(jump == 1){ jumping = 1; jump = 0; }
+				
+				//check if still jumping
 				if( counter >= 7){
 					jumping = 0;
 					counter = 0;
 				}
 
+				//if jumping, increase x position of bird
 				if(jumping == 1){
 					mesh.position.y += 4;
 					counter++;
 				}
-				//fall
+				
+				//else fall
 				else mesh.position.y-=2;
 
 				//Base height
@@ -401,8 +406,14 @@
 			//Move pipes function
 			function movePipes() {
 				var d = new Date();
+
+				//Increment x position of all pipes by 3;
 				boxMesh1.position.x-=3;
 				boxMesh3.position.x-=3;
+				boxMesh2.position.x-=3;
+				boxMesh4.position.x-=3;
+
+				//If pipes go offscreen, reset to otherside of screen
 				if(boxMesh1.position.x <= -325 ) {
 					boxMesh1.position.x = 325;
 					boxMesh3.position.x = 325;
@@ -410,8 +421,6 @@
 					boxMesh3.position.y = boxMesh1.position.y + 345;
 				}
 				
-				boxMesh2.position.x-=3;
-				boxMesh4.position.x-=3;
 				if(boxMesh2.position.x <= -325 ) {
 					boxMesh2.position.x = 325;
 					boxMesh4.position.x = 325;
@@ -420,28 +429,8 @@
 				}
 			}
 
-			function render() {
-
-				var delta = clock.getDelta();
-
-				for ( var i = 0; i < mixers.length; i ++ ) {
-
-					mixers[ i ].update( delta );
-
-				}
-/*
-				camera.position.x = 600 * Math.sin(camCount);
-				camera.position.z = 600 * Math.cos(camCount);
-				camera.rotation.y = Math.sin(camCount);
-				camCount+=.01;
-*/				
-				//Hit detection
-				if(detectHit()){
-					alert("Game Over! Your score was: " + score/2 + ". Refresh to play again!");
-					return;
-				} else{
-								
-					// increment score if passing through blocks
+			function setScore(){
+				// increment score if passing through blocks
 					if(boxMesh1.position.x <= 1 && boxMesh1.position.x >= -1 ) score++;
 					if(boxMesh2.position.x <= 1 && boxMesh2.position.x >= -1 ) score++;
 					if(boxMesh3.position.x <= 1 && boxMesh3.position.x >= -1 ) score++;
@@ -451,11 +440,27 @@
 					var scoreDisplay = document.createElement('div');
 					scoreDisplay.style.position = 'absolute';
 					scoreDisplay.style.backgroundColor = "white";
-					scoreDisplay.innerHTML = score/2;
-					scoreDisplay.style.top = 200 + 'px';
-					scoreDisplay.style.left = 500 + 'px';
+					scoreDisplay.innerHTML = "Score: " + score/2;
+					scoreDisplay.style.top = 50 + 'px';
+					scoreDisplay.style.left = 100 + 'px';
 					document.body.appendChild(scoreDisplay);
-				}	
+			}
+
+			function render() {
+
+				var delta = clock.getDelta();
+
+				for ( var i = 0; i < mixers.length; i ++ ) {
+					mixers[ i ].update( delta );
+				}
+
+				//Hit detection
+				if(detectHit()){
+					alert("Game Over! Your score was: " + score/2 + ". Refresh to play again!");
+					return;
+				} 
+				else setScore();
+
 				//Jump & Fall
 				jumpFunc();
 				
@@ -464,7 +469,6 @@
 
 				//Render Scene
 				renderer.render( scene, camera );
-
 			}
 
 		</script>
