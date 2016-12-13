@@ -312,30 +312,38 @@
 					dirLight.visible = !dirLight.visible;
 					break;
 
+
+					// the following key presses move the directional lighting in the x and y directions
+
+					// incerment x, set, and add to scene
 				    case 37:
 				    dirLight_x++;
 				    dirLight.position.set(dirLight_x, 1.75, 1);
 				    scene.add(dirLight);
 				    break;
 
+					// decrement x, set, and add to scene
 				    case 39:
 				    dirLight_x--;
 				    dirLight.position.set(dirLight_x, 1.75, 1);
 				    scene.add(dirLight);
 				    break;
 
+					// increment y, set, and add to scene
 				    case 38:
 				    dirLight_y++;
 				    dirLight.position.set(-1, dirLight_y, 1);
 				    scene.add(dirLight);
 				    break;
 
+					// decrement y, set, and add to scene
 				    case 40:
 				    dirLight_y--;
 				    dirLight.position.set(-1, dirLight_y, 1);
 				    scene.add(dirLight);
 				    break;
 
+					// jump
 					case 32:
 
 					jump = 1;
@@ -440,7 +448,7 @@
 					var scoreDisplay = document.createElement('div');
 					scoreDisplay.style.position = 'absolute';
 					scoreDisplay.style.backgroundColor = "white";
-					scoreDisplay.innerHTML = "Score: " + score/2;
+					scoreDisplay.innerHTML = "Score: " + score/2; // display score iwht label
 					scoreDisplay.style.top = 50 + 'px';
 					scoreDisplay.style.left = 100 + 'px';
 					document.body.appendChild(scoreDisplay);
